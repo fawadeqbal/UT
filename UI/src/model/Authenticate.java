@@ -4,17 +4,17 @@
  */
 package model;
 
-import common.UserDTO;
+import common.utils.UserDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import static model.MySQLConnection.getConnection;
+import static DAL.MySQLConnection.getConnection;
 
 
-public class Authentication {
+public class Authenticate {
     
-    public boolean verifyUser(UserDTO user) {
+    public boolean authenticateUser(UserDTO user) {
         Connection connection=null;
         try{
             connection=getConnection();
@@ -31,8 +31,13 @@ public class Authentication {
             statement = connection.prepareStatement(query);
             statement.setString(1,user.getUsername());
             statement.setString(2,user.getPassword());
+            System.out.println("Executing query: " + statement.toString()); // Debug statement
+
             result=statement.executeQuery();
             if(result.next()){
+                 String userType = result.getString("type");
+                 user.setType(userType);
+        System.out.println("User Type: " + user.getType());
                 return true;
             }
         }
